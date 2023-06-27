@@ -36,9 +36,12 @@ console.log("Open browser and enter: http://localhost:3000")
  */
 
 function normalizePort(val) {
+  //此功能是一个安全护栏,以确保提供的端口是 number, 
+  //如果不是数字,则为 string,如果有任何其他事情将其设置为false
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
+    
     // named pipe
     return val;
   }

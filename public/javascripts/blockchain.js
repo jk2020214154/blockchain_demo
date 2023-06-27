@@ -1,5 +1,5 @@
-var difficulty = 4;        // number of zeros required at end of hash
-var maximumNonce = 500000; // limit the nonce to this so we don't mine too long
+var difficulty = 3;        // number of zeros required at the front of hash
+var maximumNonce = 500000000; // limit the nonce to this so we don't mine too long
 
 // NOTE: Because there are 16 possible characters in a hex value, each time you increment
 // the difficulty by one you make the puzzle 16 times harder. In my testing, a difficulty
@@ -23,7 +23,7 @@ function sha256(block, chain) {
 
 function updateState(block, chain) {
   // set the well background red or green for this block
-  if ($('#block' + block + 'chain' + chain + 'hash').val().substr(64-difficulty, 64) === pattern) {
+  if ($('#block' + block + 'chain' + chain + 'hash').val().substr(0, difficulty) === pattern) {
     $('#block' + block + 'chain' + chain + 'well').removeClass('well-error').addClass('well-success');
   }
   else {
@@ -47,11 +47,15 @@ function updateChain(block, chain) {
   }
 }
 
+var tot_times=0,tot_cnt=0;
+
+
 function mine(block, chain, isChain) {
+  var t0=performance.now();
   for (var x = 0; x <= maximumNonce; x++) {
     $('#block' + block + 'chain' + chain + 'nonce').val(x);
     $('#block' + block + 'chain' + chain + 'hash').val(sha256(block, chain));
-    if ($('#block' + block + 'chain' + chain + 'hash').val().substr(64-difficulty, 64) === pattern) {
+    if ($('#block' + block + 'chain' + chain + 'hash').val().substr(0, difficulty) === pattern) {
       if (isChain) {
         updateChain(block, chain);
       }
@@ -61,4 +65,9 @@ function mine(block, chain, isChain) {
       break;
     }
   }
+  var t1=performance.now();
+  tot_times+=Math.floor(t1-t0);
+  tot_cnt++;
+  console.log(tot_cnt+" ——difficulty: "+difficulty+", "+"Call Function took: " + Math.floor(t1-t0)+"ms"+", "+"tot_time: "+tot_times+"ms.");
+
 }

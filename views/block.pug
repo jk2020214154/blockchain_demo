@@ -34,11 +34,27 @@ block content
           .col-sm-10
             button#block1chain1mineButton.btn.btn-primary.ladda-button(data-style='expand-right')
               span.ladda-label #{__('Mine')}
-
+        .form-group
+          .col-sm-2
+            i.icon-spinner.icon-spin.icon-large
+          .col-sm-10
+            button#block1chain1loadButton.btn.btn-primary.ladda-button(data-style='expand-right')
+              span.ladda-label 加载数据
+        .form-group
+          .col-sm-2
+            i.icon-spinner.icon-spin.icon-large
+          .col-sm-10
+            button#block1chain1myButton.btn.btn-primary.ladda-button(data-style='expand-right')
+              span.ladda-label 执行300次
   script.
+
     $(function() {
       mineButtonAnimation(1, 1);
       updateHash(1, 1);
+      myfunction(1,1);
+      loaddata(1,1);
+
+      
     });
 
     function getText(block, chain) {
@@ -47,13 +63,52 @@ block content
              $('#block'+block+'chain'+chain+'data').val();
     }
 
+    var maxexcutimes=300,excu_many_times_flag=0;
+
+    var temp="";
+
+    function loaddata(block,chain){
+      $('#block'+block+'chain'+chain+'loadButton').click(function(event) {
+          event.preventDefault();
+          temp="";
+          for(let i=1;i<=1000;i++)
+          {
+            if(i===1)
+              temp+=i.toString();
+            else temp+=", "+i.toString();
+          }
+          $('#block'+block+'chain'+chain+'data').val(temp);
+      });
+    }
+
+    function myfunction(block,chain){
+      
+      $('#block'+block+'chain'+chain+'myButton').click(function(t) {
+          t.preventDefault();
+          excu_many_times_flag=1;
+
+          
+          for(let i=1;i<=maxexcutimes;i++)
+              $('#block'+block+'chain'+chain+'mineButton').click();
+          
+      });
+
+    }
+
+    
     function mineButtonAnimation(block, chain) {
       $('#block'+block+'chain'+chain+'mineButton').click(function(e) {
           e.preventDefault();
           var l = Ladda.create(this);
-          l.start();
+           l.start();
           setTimeout(function() {
               mine(block, chain, false);
+              if(tot_cnt===maxexcutimes&&excu_many_times_flag===1)
+              {
+                 console.log("tot_cnt: "+tot_cnt+", tot_times: "+tot_times+"ms, ave_times: "+Math.floor(tot_times/300)+"ms.");
+                 tot_cnt=0,tot_times=0;
+                 excu_many_times_flag===0;
+              }
               l.stop();
             }, 250); // give UI time to update
         });
