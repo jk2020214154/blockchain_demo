@@ -39,7 +39,7 @@ block content
             i.icon-spinner.icon-spin.icon-large
           .col-sm-10
             button#block1chain1myButton.btn.btn-primary.ladda-button(data-style='expand-right')
-              span.ladda-label 执行300次
+              span.ladda-label 执行许多次
   script.
 
     $(function() {
@@ -57,6 +57,7 @@ block content
     }
 
     var maxexcutimes=300,excu_many_times_flag=0;
+    var maxnum=1000;
 
     var temp="";
 
@@ -82,27 +83,33 @@ block content
       $('#block'+block+'chain'+chain+'mineButton').click(function(e) {
           e.preventDefault();
           var l = Ladda.create(this);
+          for(let idx=1;idx<=maxnum;idx++)
+          {
             setTimeout(function() {
-              tot_cnt=0,tot_times=0;
-              for(let idx=1;idx<=1000;idx++)
-              {
+              if(tot_cnt===maxnum)
+                tot_cnt=0,tot_times=0;
+
                 l.start();
                 $('#block'+block+'chain'+chain+'data').val(idx.toString());
                 mine(block, chain, false);
 
                 l.stop();
+              
+
+              if(tot_cnt===maxnum)
+              {
+                sum_times+=tot_times;
+                sum_cnt++;
+                console.log("");
               }
-              sum_times+=tot_times;
-              sum_cnt++;
-              console.log("");
-              if(sum_cnt===maxexcutimes&&excu_many_times_flag===1)
+              if(sum_cnt===maxexcutimes&&tot_cnt===maxnum&&excu_many_times_flag===1)
               {
                   console.log("tot_cnt: "+sum_cnt+", tot_times: "+sum_times+"ms, ave_times: "+Math.floor(sum_times/maxexcutimes)+"ms."); 
                   excu_many_times_flag=0;
               }
 
               }, 250); // give UI time to update
-          
+          } 
           });
     
     }
